@@ -5,26 +5,43 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 
 // Configuración de NodeMailer
+const nodemailer = require('nodemailer');
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS, // App Password
+    pass: process.env.EMAIL_PASS,
   },
+  logger: true,   // 🔍 muestra logs en consola
+  debug: true,    // 🔍 muestra mensajes SMTP completos
 });
+
 
 // Generar contraseña temporal
 const generarPasswordTemporal = () => crypto.randomBytes(4).toString('hex'); // 8 caracteres
 
 // Enviar correo
 const enviarCorreo = async (destinatario, asunto, html) => {
-  await transporter.sendMail({
-    from: `"Sistema Médicos" <${process.env.EMAIL_USER}>`,
-    to: destinatario,
-    subject: asunto,
-    html,
-  });
+  console.log('📨 Intentando enviar correo a:', destinatario);
+  console.log('📩 Asunto:', asunto);
+  try {
+    const info = await transporter.sendMail({
+      from: `"Sistema Médicos" <${process.env.EMAIL_USER}>`,
+      to: destinatario,
+      subject: asunto,
+      html,
+    });
+    console.log('✅ Correo enviado correctamente.');
+    console.log('📨 Respuesta SMTP:', info.response);
+  } catch (error) {
+    console.error('❌ Error al enviar correo:', error.message);
+    console.error('📄 Stack trace:', error);
+    // No detengas el flujo si el correo falla
+    throw error;
+  }
 };
+
 
 // Registro de usuario
 const registrarUsuario = async (req, res) => {
