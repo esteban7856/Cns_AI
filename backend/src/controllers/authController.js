@@ -99,20 +99,29 @@ const loginUsuario = async (req, res) => {
     if (!esCorrecta) return res.status(400).json({ mensaje: 'Contraseña incorrecta' });
 
     // Generar JWT
-    const token = jwt.sign({ id: usuario.id, rol: usuario.rol }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign(
+      { id: usuario.id, rol: usuario.rol },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
 
+    // ✅ Enviamos más datos al frontend
     res.status(200).json({
       mensaje: 'Login exitoso',
       token,
-      // Normalizamos el nombre del campo hacia el frontend
       primerIngreso: usuario.primeringreso,
       rol: usuario.rol,
+      nombre: usuario.nombre,
+      apellido: usuario.apellido,
+      email: usuario.email,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ mensaje: 'Error al iniciar sesión' });
   }
 };
+
+
 
 // Cambiar contraseña primera vez
 const cambiarPasswordPrimeraVez = async (req, res) => {
