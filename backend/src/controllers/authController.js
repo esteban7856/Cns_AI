@@ -4,8 +4,6 @@ const { Usuario } = require('../models/usuario');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 
-// Configuración de NodeMailer
-const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -13,8 +11,8 @@ const transporter = nodemailer.createTransport({
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
-  logger: true,   // 🔍 muestra logs en consola
-  debug: true,    // 🔍 muestra mensajes SMTP completos
+  logger: true,   
+  debug: true,    
 });
 
 
