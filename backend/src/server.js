@@ -6,7 +6,8 @@ dotenv.config();
 
 const authRoutes = require('./routes/authRoutes');
 const usuariosRoutes = require('./routes/usuarios');
-const { sequelize } = require('./config/db'); // ✅ conexión correcta
+const pacienteRoutes = require('./routes/paciente'); 
+const { sequelize } = require('./config/db'); 
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -18,6 +19,7 @@ app.use(cors());
 // Rutas
 app.use('/api/auth', authRoutes);
 app.use('/api/usuarios', usuariosRoutes);
+app.use('/api/pacientes', pacienteRoutes);
 
 // Inicialización del servidor
 async function start() {
