@@ -6,7 +6,7 @@ dotenv.config();
 
 const authRoutes = require('./routes/authRoutes');
 const usuariosRoutes = require('./routes/usuarios');
-const pacienteRoutes = require('./routes/paciente'); 
+const pacienteRoutes = require('./routes/pacientes'); 
 const { sequelize } = require('./config/db'); 
 
 const app = express();
