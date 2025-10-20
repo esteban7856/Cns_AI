@@ -22,9 +22,10 @@ export default function Dashboard() {
     navigate("/login");
   };
 
-  if (!user) {
+  if (!user || !user.email) {
     return null;
   }
+  
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -40,7 +41,9 @@ export default function Dashboard() {
             </div>
             
             <div className="flex items-center space-x-4">
-              <span className="text-white text-sm">Bienvenido, Dr. {user.email.split('@')[0]}</span>
+              <span className="text-white text-sm">
+                Bienvenido, Dr. {user?.email?.split('@')[0] || 'Usuario'}
+              </span>
               <span className="bg-cns-blue-light text-white px-3 py-1 rounded text-xs">
                 {user.rol.toUpperCase()}
               </span>

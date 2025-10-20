@@ -35,8 +35,7 @@ const enviarCorreo = async (destinatario, asunto, html) => {
   } catch (error) {
     console.error('❌ Error al enviar correo:', error.message);
     console.error('📄 Stack trace:', error);
-    // No detengas el flujo si el correo falla
-    throw error;
+    
   }
 };
 
@@ -88,25 +87,54 @@ const registrarUsuario = async (req, res) => {
 };
 
 // Login
+// Login - acepta contraseña normal o código temporal
 const loginUsuario = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     const usuario = await Usuario.findOne({ where: { email } });
-    if (!usuario) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    if (!usuario) {
+      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    }
 
+    // 1️⃣ Si el usuario tiene un código temporal vigente, lo verificamos primero
+    if (usuario.codigo_restablecer && usuario.expiracion_codigo) {
+      // ¿el código sigue vigente?
+      if (new Date() <= usuario.expiracion_codigo) {
+        const esCodigoValido = await bcrypt.compare(password, usuario.codigo_restablecer);
+        if (esCodigoValido) {
+          // ✅ Código correcto → generar token temporal para cambio de contraseña
+          const token = jwt.sign(
+            { id: usuario.id, email: usuario.email, tipo: 'reset-password' },
+            process.env.JWT_SECRET,
+            { expiresIn: '15m' } // token temporal
+          );
+
+          return res.status(200).json({
+            mensaje: 'Código verificado correctamente',
+            token,
+            requiereNuevaContrasena: true,
+            email: usuario.email
+          });
+        }
+      }
+      // si llega aquí y no validó → seguimos probando contraseña normal
+    }
+
+    // 2️⃣ Verificamos contraseña normal (login normal)
     const esCorrecta = await bcrypt.compare(password, usuario.password);
-    if (!esCorrecta) return res.status(400).json({ mensaje: 'Contraseña incorrecta' });
+    if (!esCorrecta) {
+      return res.status(400).json({ mensaje: 'Credenciales inválidas' });
+    }
 
-    // Generar JWT
+    // 3️⃣ Generar token JWT normal (1 hora)
     const token = jwt.sign(
       { id: usuario.id, rol: usuario.rol },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
 
-    // ✅ Enviamos más datos al frontend
-    res.status(200).json({
+    return res.status(200).json({
       mensaje: 'Login exitoso',
       token,
       primerIngreso: usuario.primeringreso,
@@ -114,78 +142,176 @@ const loginUsuario = async (req, res) => {
       nombre: usuario.nombre,
       apellido: usuario.apellido,
       email: usuario.email,
+      requiereNuevaContrasena: false
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ mensaje: 'Error al iniciar sesión' });
+    console.error('Error en loginUsuario:', error);
+    return res.status(500).json({ mensaje: 'Error al iniciar sesión' });
   }
 };
 
 
 
+
 // Cambiar contraseña primera vez
+
 const cambiarPasswordPrimeraVez = async (req, res) => {
   try {
-    const { nuevaContrasena } = req.body;
-    const usuarioId = req.usuario.id; // desde middleware JWT
+    // 🔹 Acepta ambas variantes (con y sin ñ)
+    const { nuevaContrasena, nuevaContraseña } = req.body;
+    const passwordRecibida = nuevaContrasena || nuevaContraseña;
 
-    const hashedPassword = await bcrypt.hash(nuevaContrasena, 10);
+    // 🔍 Validación antes de hashear
+    if (!passwordRecibida || passwordRecibida.trim() === '') {
+      return res.status(400).json({ mensaje: 'La nueva contraseña es requerida' });
+    }
 
+    // 🔐 Obtener el ID del usuario autenticado desde el token
+    const usuarioId = req.usuario?.id;
+    if (!usuarioId) {
+      return res.status(401).json({ mensaje: 'Token no válido o usuario no autenticado' });
+    }
+
+    // 🔒 Hashear la contraseña nueva
+    const hashedPassword = await bcrypt.hash(passwordRecibida, 10);
+
+    // 🔄 Actualizar en la base de datos
     await Usuario.update(
       { password: hashedPassword, primeringreso: false },
       { where: { id: usuarioId } }
     );
 
+    console.log(`✅ Contraseña actualizada para el usuario ID ${usuarioId}`);
     res.status(200).json({ mensaje: 'Contraseña actualizada correctamente' });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ mensaje: 'Error al cambiar contraseña' });
+    console.error('❌ Error en cambiarPasswordPrimeraVez:', error);
+    res.status(500).json({ mensaje: 'Error al cambiar contraseña', error: error.message });
   }
 };
 
-// Forgot password
+
+// Forgot password - Envía código temporal
+
 const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
 
     const usuario = await Usuario.findOne({ where: { email } });
-    if (!usuario) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    if (!usuario) {
+      // por seguridad puedes devolver siempre 200, pero dejamos 404 explícito
+      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    }
 
-    const codigoTemporal = crypto.randomBytes(3).toString('hex'); // 6 caracteres
-    const hashedPassword = await bcrypt.hash(codigoTemporal, 10);
+    // Generar código temporal (6 dígitos)
+    const codigoTemporal = Math.floor(100000 + Math.random() * 900000).toString();
+    const codigoExpiracion = new Date(Date.now() + 10 * 60 * 1000); // 10 minutos
 
-    await Usuario.update({ contraseña: hashedPassword, primeringreso: true }, { where: { email } });
+    // Guardar en los campos correctos del modelo
+    await Usuario.update(
+      {
+        codigo_restablecer: await bcrypt.hash(codigoTemporal, 10),
+        expiracion_codigo: codigoExpiracion
+      },
+      { where: { id: usuario.id } }
+    );
 
+    // Enviar el correo
     const mensaje = `
       <h3>Restablecimiento de contraseña</h3>
-      <p>Tu código temporal es: <b>${codigoTemporal}</b></p>
-      <p>Usa este código para iniciar sesión y luego cambia tu contraseña.</p>
+      <p>Tu código de verificación es: <b>${codigoTemporal}</b></p>
+      <p>Este código expirará en 10 minutos.</p>
+      <p>Si no solicitaste este cambio, ignora este correo.</p>
     `;
-    await enviarCorreo(email, 'Recuperación de contraseña', mensaje);
 
-    res.status(200).json({ mensaje: 'Se ha enviado un código temporal a tu correo' });
+    await enviarCorreo(email, 'Código de verificación', mensaje);
+
+    return res.status(200).json({
+      mensaje: 'Se ha enviado un código de verificación a tu correo',
+      email
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ mensaje: 'Error al enviar código temporal' });
+    console.error('Error en forgotPassword:', error);
+    return res.status(500).json({ mensaje: 'Error al procesar la solicitud' });
   }
 };
 
-// Reset password
-const resetPassword = async (req, res) => {
+// Verificar código temporal
+const verificarCodigoTemporal = async (req, res) => {
   try {
-    const { email, nuevaContrasena } = req.body;
+    const { email, codigo } = req.body;
 
     const usuario = await Usuario.findOne({ where: { email } });
-    if (!usuario) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    if (!usuario) {
+      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    }
 
-    const hashedPassword = await bcrypt.hash(nuevaContrasena, 10);
+    // Verificar si hay un código y si no ha expirado
+    if (!usuario.codigo_restablecer  || !usuario.expiracion_codigo) {
+      return res.status(400).json({ mensaje: 'Código no solicitado o expirado' });
+    }
 
-    await Usuario.update({ password: hashedPassword, primeringreso: false }, { where: { email } });
+    if (new Date() > usuario.expiracion_codigo) {
+      return res.status(400).json({ mensaje: 'El código ha expirado' });
+    }
+
+    // Verificar el código
+    const esValido = await bcrypt.compare(codigo, usuario.codigo_restablecer);
+    if (!esValido) {
+      return res.status(400).json({ mensaje: 'Código inválido' });
+    }
+
+    // Generar token temporal para permitir el cambio de contraseña
+    const token = jwt.sign(
+      { id: usuario.id, email: usuario.email, tipo: 'reset-password' },
+      process.env.JWT_SECRET,
+      { expiresIn: '15m' } // Token válido por 15 minutos
+    );
+
+    res.status(200).json({ 
+      mensaje: 'Código verificado correctamente',
+      token
+    });
+
+  } catch (error) {
+    console.error('Error en verificarCodigoTemporal:', error);
+    res.status(500).json({ mensaje: 'Error al verificar el código' });
+  }
+};
+
+// Reset password - Solo se puede usar con un token válido
+const resetPassword = async (req, res) => {
+  try {
+    // Aceptar tanto 'nuevaContrasena' como 'nuevaContraseña' (con y sin ñ)
+    const { nuevaContrasena, nuevaContraseña } = req.body;
+    const password = nuevaContrasena || nuevaContraseña;
+    
+    if (!password) {
+      return res.status(400).json({ mensaje: 'La nueva contraseña es requerida' });
+    }
+    
+    const usuarioId = req.usuario.id; // Obtenido del token JWT
+    
+    // Validar que el token sea para restablecer contraseña
+    if (req.usuario.tipo !== 'reset-password') {
+      return res.status(403).json({ mensaje: 'Token no válido para esta operación' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Actualizar contraseña y limpiar códigos temporales
+    await Usuario.update(
+      { 
+        password: hashedPassword, 
+        codigo_restablecer: null,
+        expiracion_codigo: null
+      }, 
+      { where: { id: usuarioId } }
+    );
 
     res.status(200).json({ mensaje: 'Contraseña restablecida correctamente' });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ mensaje: 'Error al restablecer contraseña' });
+    console.error('Error en resetPassword:', error);
+    res.status(500).json({ mensaje: 'Error al restablecer la contraseña' });
   }
 };
 
@@ -194,5 +320,6 @@ module.exports = {
   loginUsuario,
   cambiarPasswordPrimeraVez,
   forgotPassword,
+  verificarCodigoTemporal,
   resetPassword,
 };
