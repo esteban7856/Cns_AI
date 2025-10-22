@@ -8,7 +8,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 async function enviarCorreo(destinatario, asunto, html) {
   try {
     const data = await resend.emails.send({
-      from: 'Sistema Médicos <onboarding@resend.dev>', // O usa un dominio verificado
+      from: 'Sistema Médicos <estebantorrez215@gmail.com>', // O usa un dominio verificado
       to: destinatario,
       subject: asunto,
       html,
