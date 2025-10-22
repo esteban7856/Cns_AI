@@ -1,34 +1,30 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { Usuario } = require('../models/usuario');
-const { Resend } = require('resend');
+const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-
+// Configuración de NodeMailer
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS, // App Password
+  },
+});
 
 // Generar contraseña temporal
 const generarPasswordTemporal = () => crypto.randomBytes(4).toString('hex'); // 8 caracteres
 
-async function enviarCorreo(destinatario, asunto, html) {
-    try {
-    const data = await resend.emails.send({
-      from: 'Sistema Médicos <estebantorrez215@gmail.com>',
-      to: destinatario,
-      subject: asunto,
-      html,
-    });
-    console.log('✅ Correo enviado:', data);
-  } catch (error) {
-    console.error('❌ Error al enviar correo:', error);
-  }
-
-}
-
-module.exports = { enviarCorreo };
-
-
+// Enviar correo
+const enviarCorreo = async (destinatario, asunto, html) => {
+  await transporter.sendMail({
+    from: `"Sistema Médicos" <${process.env.EMAIL_USER}>`,
+    to: destinatario,
+    subject: asunto,
+    html,
+  });
+};
 // Registro de usuario
 const registrarUsuario = async (req, res) => {
   try {

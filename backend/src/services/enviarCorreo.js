@@ -1,22 +1,23 @@
 // src/services/mailService.js
-const { Resend } = require('resend');
+const nodemailer = require('nodemailer');
 
-// Inicializa Resend con tu API Key
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-// Función para enviar correos
-async function enviarCorreo(destinatario, asunto, html) {
-  try {
-    const data = await resend.emails.send({
-      from: 'Sistema Médicos <estebantorrez215@gmail.com>', // O usa un dominio verificado
-      to: destinatario,
-      subject: asunto,
-      html,
-    });
-    console.log('✅ Correo enviado:', data);
-  } catch (error) {
-    console.error('❌ Error al enviar correo:', error);
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,     // tu correo
+    pass: process.env.EMAIL_PASS      // tu contraseña o app password
   }
+});
+
+async function enviarCorreo(destinatario, asunto, mensaje) {
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: destinatario,
+    subject: asunto,
+    text: mensaje
+  };
+
+  return transporter.sendMail(mailOptions);
 }
 
 module.exports = { enviarCorreo };
