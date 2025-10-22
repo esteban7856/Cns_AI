@@ -1,2 +1,0 @@
-# Cns_AI
-sistema_web_para_el_prediagnostico_CNS
