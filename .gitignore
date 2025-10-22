@@ -1,0 +1,30 @@
+# Global ignores
+# Dependencies
+node_modules/
+
+# Builds / dist
+build/
+dist/
+coverage/
+
+# OS / misc
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.*
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Ignorar entornos virtuales
+venv/
+microservice/venv/
+
+# Ignorar modelos entrenados
+*.pt
+microservice/saved_model/
