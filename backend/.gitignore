@@ -1,0 +1,15 @@
+# Node and build artifacts backjend
+node_modules/
+dist/
+build/
+coverage/
+
+# Environment files
+.env
+.env.*
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
