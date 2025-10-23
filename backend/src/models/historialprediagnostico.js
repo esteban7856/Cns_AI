@@ -5,7 +5,9 @@ const HistorialPrediagnostico = sequelize.define('HistorialPrediagnostico', {
     probabilidad: { type: DataTypes.FLOAT, validate: { min: 0, max: 1 } },
     fecha_prediccion: { type: DataTypes.DATE, defaultValue: Sequelize.NOW },
     estado: { type: DataTypes.ENUM('pendiente','confirmado','revisado'), defaultValue: 'pendiente' }
-  }, { timestamps: false });
+  }, {  timestamps: false, 
+  freezeTableName: true, 
+  tableName: 'historial_prediagnosticos' });
   
   HistorialPrediagnostico.belongsTo(Paciente, { foreignKey: 'paciente_id', onDelete: 'CASCADE' });
   Paciente.hasMany(HistorialPrediagnostico, { foreignKey: 'paciente_id', as: 'historiales' });

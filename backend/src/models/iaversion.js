@@ -7,5 +7,7 @@ const IAVersion = sequelize.define('IAVersion', {
     precision: { type: DataTypes.FLOAT, validate: { min:0, max:1 } },
     estado: { type: DataTypes.ENUM('activo','inactivo','en prueba'), defaultValue: 'activo' },
     comentarios_adicionales: { type: DataTypes.TEXT }
-  }, { timestamps: false });
+  }, {  timestamps: false, 
+  freezeTableName: true, 
+  tableName: 'ia_versiones' });
   

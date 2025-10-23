@@ -4,7 +4,9 @@ const Prediagnostico = sequelize.define('Prediagnostico', {
     probabilidad: { type: DataTypes.FLOAT, validate: { min: 0, max: 1 } },
     recomendaciones: { type: DataTypes.TEXT },
     fecha_prediccion: { type: DataTypes.DATE, defaultValue: Sequelize.NOW }
-  }, { timestamps: false });
+  }, {  timestamps: false, 
+  freezeTableName: true, 
+  tableName: 'prediagnosticos' });
   
   Prediagnostico.belongsTo(Sintoma, { foreignKey: 'sintoma_id', onDelete: 'CASCADE' });
   Sintoma.hasOne(Prediagnostico, { foreignKey: 'sintoma_id', as: 'prediagnostico' });

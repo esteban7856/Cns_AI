@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Generar contraseña temporal
-const generarPasswordTemporal = () => crypto.randomBytes(4).toString('hex'); // 8 caracteres
+const generarPasswordTemporal = () => crypto.randomBytes(4).toString('hex'); 
 
 // Enviar correo
 const enviarCorreo = async (destinatario, asunto, html) => {
@@ -82,7 +82,7 @@ const loginUsuario = async (req, res) => {
       return res.status(404).json({ mensaje: 'Usuario no encontrado' });
     }
 
-    // 1️⃣ Si el usuario tiene un código temporal vigente, lo verificamos primero
+    //Si el usuario tiene un código temporal vigente, lo verificamos primero
     if (usuario.codigo_restablecer && usuario.expiracion_codigo) {
       // ¿el código sigue vigente?
       if (new Date() <= usuario.expiracion_codigo) {
@@ -106,13 +106,13 @@ const loginUsuario = async (req, res) => {
       // si llega aquí y no validó → seguimos probando contraseña normal
     }
 
-    // 2️⃣ Verificamos contraseña normal (login normal)
+    //Verificamos contraseña normal (login normal)
     const esCorrecta = await bcrypt.compare(password, usuario.password);
     if (!esCorrecta) {
       return res.status(400).json({ mensaje: 'Credenciales inválidas' });
     }
 
-    // 3️⃣ Generar token JWT normal (1 hora)
+    //Generar token JWT normal (1 hora)
     const token = jwt.sign(
       { id: usuario.id, rol: usuario.rol },
       process.env.JWT_SECRET,
@@ -142,34 +142,34 @@ const loginUsuario = async (req, res) => {
 
 const cambiarPasswordPrimeraVez = async (req, res) => {
   try {
-    // 🔹 Acepta ambas variantes (con y sin ñ)
+    //Acepta ambas variantes (con y sin ñ)
     const { nuevaContrasena, nuevaContraseña } = req.body;
     const passwordRecibida = nuevaContrasena || nuevaContraseña;
 
-    // 🔍 Validación antes de hashear
+    //Validación antes de hashear
     if (!passwordRecibida || passwordRecibida.trim() === '') {
       return res.status(400).json({ mensaje: 'La nueva contraseña es requerida' });
     }
 
-    // 🔐 Obtener el ID del usuario autenticado desde el token
+    //Obtener el ID del usuario autenticado desde el token
     const usuarioId = req.usuario?.id;
     if (!usuarioId) {
       return res.status(401).json({ mensaje: 'Token no válido o usuario no autenticado' });
     }
 
-    // 🔒 Hashear la contraseña nueva
+    //Hashear la contraseña nueva
     const hashedPassword = await bcrypt.hash(passwordRecibida, 10);
 
-    // 🔄 Actualizar en la base de datos
+    //Actualizar en la base de datos
     await Usuario.update(
       { password: hashedPassword, primeringreso: false },
       { where: { id: usuarioId } }
     );
 
-    console.log(`✅ Contraseña actualizada para el usuario ID ${usuarioId}`);
+    console.log(`Contraseña actualizada para el usuario ID ${usuarioId}`);
     res.status(200).json({ mensaje: 'Contraseña actualizada correctamente' });
   } catch (error) {
-    console.error('❌ Error en cambiarPasswordPrimeraVez:', error);
+    console.error('Error en cambiarPasswordPrimeraVez:', error);
     res.status(500).json({ mensaje: 'Error al cambiar contraseña', error: error.message });
   }
 };

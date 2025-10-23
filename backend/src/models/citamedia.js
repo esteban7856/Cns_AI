@@ -4,7 +4,9 @@ const CitaMedica = sequelize.define('CitaMedica', {
     estado: { type: DataTypes.ENUM('pendiente','confirmada','cancelada','finalizada'), defaultValue: 'pendiente' },
     motivo: { type: DataTypes.STRING },
     notas: { type: DataTypes.TEXT }
-  }, { timestamps: false });
+  }, {  timestamps: false, 
+  freezeTableName: true, 
+  tableName: 'citas_medicas' });
   
   CitaMedica.belongsTo(Paciente, { foreignKey: 'paciente_id', onDelete: 'CASCADE' });
   Paciente.hasMany(CitaMedica, { foreignKey: 'paciente_id', as: 'citas' });
