@@ -121,6 +121,7 @@ const loginUsuario = async (req, res) => {
 
     return res.status(200).json({
       mensaje: 'Login exitoso',
+      id: usuario.id,        
       token,
       primerIngreso: usuario.primeringreso,
       rol: usuario.rol,
