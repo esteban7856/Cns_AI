@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/citaController');
-const { verificarToken, role } = require('../middlewares/auth');
+const { verificarToken, rol } = require('../middleware/auth');
 
 // Crear cita (solo padres o médicos)
-router.post('/', verificarToken, role(['Padre', 'Médico']), controller.create);
+router.post('/', verificarToken, rol(['Padre', 'Médico']), controller.create);
 
 // Listar citas (médicos o admin pueden ver todas, padres solo las suyas)
 router.get('/', verificarToken, controller.list);
@@ -13,12 +13,12 @@ router.get('/', verificarToken, controller.list);
 router.get('/:id', verificarToken, controller.getById);
 
 // Actualizar datos de cita (médicos o admin)
-router.patch('/:id', verificarToken, role(['Médico', 'Admin']), controller.update);
+router.patch('/:id', verificarToken, rol(['Médico', 'Admin']), controller.update);
 
 // Cambiar estado (solo médicos o admin)
-router.patch('/:id/estado', verificarToken, role(['Médico', 'Admin']), controller.changeEstado);
+router.patch('/:id/estado', verificarToken, rol(['Médico', 'Admin']), controller.changeEstado);
 
 // Eliminar cita (solo admin)
-router.delete('/:id', verificarToken, role(['Admin']), controller.remove);
+router.delete('/:id', verificarToken, rol(['Admin']), controller.remove);
 
 module.exports = router;
