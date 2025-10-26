@@ -27,7 +27,7 @@ exports.crearHorario = async (req, res) => {
       hora_fin,
     });
 
-    console.log(`✅ Nuevo horario registrado para el médico ID ${medico_id}:`, nuevo);
+    console.log(`Nuevo horario registrado para el médico ID ${medico_id}:`, nuevo);
     res.status(201).json({ mensaje: 'Horario registrado exitosamente', horario: nuevo });
   } catch (error) {
     console.error('Error al crear horario:', error);
