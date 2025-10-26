@@ -82,70 +82,78 @@ exports.obtenerDisponibilidad = async (req, res) => {
   try {
     const { medico_id } = req.params;
     const { fecha } = req.query;
-    console.log(`🔑 Médico ID ${medico_id} - Consultando disponibilidad para la fecha ${fecha}`);
 
     if (!fecha) {
-      console.log('🚫 No se recibió una fecha válida.');
-      return res.status(400).json({ mensaje: 'Debe enviar la fecha (YYYY-MM-DD)' });
+      return res.status(400).json({ mensaje: "Debe enviar la fecha (YYYY-MM-DD)" });
     }
 
-    // 1️⃣ Buscar los horarios configurados del médico
+    const fechaObj = new Date(fecha);
+    const dias = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+    const dia_semana = dias[fechaObj.getDay()]; // Determinar el día según la fecha
+
+    console.log(`🔎 Verificando horarios del médico ${medico_id} para el ${dia_semana}`);
+
+    // ✅ 1️⃣ Buscar horarios activos SOLO del día seleccionado
     const horarios = await HorarioMedico.findAll({
-      where: { medico_id, estado: true },
+      where: { medico_id, dia_semana, estado: true },
+      order: [["hora_inicio", "ASC"]],
     });
 
-    if (horarios.length === 0) {
-      console.log(`🚫 El médico ID ${medico_id} no tiene horarios configurados.`);
-      return res.status(404).json({ mensaje: 'El médico no tiene horarios registrados' });
+    if (!horarios || horarios.length === 0) {
+      return res.status(404).json({
+        mensaje: `El médico no tiene horarios asignados para ${dia_semana}`,
+        disponibles: [],
+        ocupadas: [],
+      });
     }
 
-    console.log(`✅ Horarios encontrados para el médico ID ${medico_id}:`, horarios);
+    // ✅ 2️⃣ Obtener citas existentes en ese día
+    const fechaInicio = new Date(`${fecha}T00:00:00`);
+    const fechaFin = new Date(`${fecha}T23:59:59`);
 
-    // 2️⃣ Obtener citas ocupadas ese día
     const citas = await CitaMedica.findAll({
       where: {
         medico_id,
-        fecha_cita: {
-          [Op.between]: [
-            new Date(`${fecha}T00:00:00`),
-            new Date(`${fecha}T23:59:59`)
-          ]
-        },
-        estado: { [Op.ne]: 'cancelada' }
+        fecha_cita: { [Op.between]: [fechaInicio, fechaFin] },
+        estado: { [Op.ne]: "cancelada" },
       },
+      attributes: ["fecha_cita"],
     });
 
-    const ocupadas = citas.map(c => {
-      const hora = new Date(c.fecha_cita).toISOString().substring(11, 16);
-      return hora;
+    // ✅ 3️⃣ Convertir citas existentes a horas ocupadas
+    const ocupadas = citas.map((c) => {
+      const hora = new Date(c.fecha_cita);
+      return hora.toISOString().substring(11, 16); // formato HH:mm
     });
 
-    console.log(`📅 Citas ocupadas para el médico ID ${medico_id} el ${fecha}:`, ocupadas);
-
-    // 3️⃣ Generar bloques de 30 minutos entre inicio y fin
+    // ✅ 4️⃣ Generar todas las horas disponibles según los horarios del día
     const disponibles = [];
-    horarios.forEach(horario => {
-      let [h, m, s] = horario.hora_inicio.split(':').map(Number);
-      const [hFin, mFin] = horario.hora_fin.split(':').map(Number);
+    horarios.forEach((h) => {
+      const [hInicio, mInicio] = h.hora_inicio.split(":").map(Number);
+      const [hFin, mFin] = h.hora_fin.split(":").map(Number);
+      const inicio = new Date(fechaObj.setHours(hInicio, mInicio, 0, 0));
+      const fin = new Date(fechaObj.setHours(hFin, mFin, 0, 0));
 
-      while (h < hFin || (h === hFin && m < mFin)) {
-        const bloque = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-        if (!ocupadas.includes(bloque)) disponibles.push(bloque);
-        m += 30;
-        if (m >= 60) { h += 1; m = 0; }
+      for (let d = new Date(inicio); d < fin; d.setMinutes(d.getMinutes() + 60)) {
+        const horaStr = d.toISOString().substring(11, 16);
+        if (!ocupadas.includes(horaStr)) {
+          disponibles.push(horaStr);
+        }
       }
     });
-
-    console.log(`✅ Horas disponibles para el médico ID ${medico_id} el ${fecha}:`, disponibles);
 
     return res.json({
       medico_id,
       fecha,
+      dia_semana,
       disponibles,
-      ocupadas
+      ocupadas,
     });
   } catch (error) {
-    console.error('Error al obtener disponibilidad:', error);
-    res.status(500).json({ mensaje: 'Error al obtener disponibilidad', error: error.message });
+    console.error("❌ Error al obtener disponibilidad:", error);
+    res.status(500).json({
+      mensaje: "Error al obtener disponibilidad",
+      error: error.message,
+    });
   }
 };
