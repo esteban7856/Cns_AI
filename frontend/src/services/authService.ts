@@ -3,6 +3,7 @@ const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api/auth
 // Login
 export interface LoginResponse {
   mensaje: string;
+  id: number;
   token: string;
   primerIngreso: boolean;
   rol: string;

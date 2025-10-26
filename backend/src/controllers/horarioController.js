@@ -1,5 +1,6 @@
 const { models } = require('../models');
-const { HorarioMedico, CitaMedica, Usuario } = models;
+const { HorarioMedico, CitaMedica, Usuario } = require('../models');
+
 
 const { Op } = require('sequelize');
 

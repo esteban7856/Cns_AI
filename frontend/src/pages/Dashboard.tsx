@@ -1,120 +1,105 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentUser, logout } from "../services/authService";
+import React from "react";
 
-export default function Dashboard() {
+const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const user = getCurrentUser();
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-
-    if (user.primerIngreso) {
-      navigate("/cambiar-password");
-    }
+    if (!user) navigate("/login");
+    else if (user.primerIngreso) navigate("/cambiar-password");
   }, [user, navigate]);
 
-  const handleLogout = () => {
+  const handleLogout = (): void => {
     logout();
     navigate("/login");
   };
 
-  if (!user || !user.email) {
-    return null;
-  }
-  
+  if (!user) return <></>;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header CNS */}
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* Header */}
       <nav className="bg-cns-blue shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center mr-3">
-                <span className="text-cns-blue font-bold text-sm">CNS</span>
-              </div>
-              <h1 className="text-white text-lg font-bold">CNS - Sistema Médico</h1>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <span className="text-white text-sm">
-                Bienvenido, Dr. {user?.email?.split('@')[0] || 'Usuario'}
-              </span>
-              <span className="bg-cns-blue-light text-white px-3 py-1 rounded text-xs">
-                {user.rol.toUpperCase()}
-              </span>
-              <button
-                onClick={handleLogout}
-                className="bg-white text-cns-blue px-4 py-2 rounded text-sm hover:bg-gray-100"
-              >
-                Cerrar Sesión
-              </button>
-            </div>
+        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center text-white">
+          <h1 className="text-xl font-bold">CNS - Sistema Médico</h1>
+          <div className="flex items-center space-x-3">
+            <span>👨‍⚕️ {user.nombre} {user.apellido}</span>
+            <span className="bg-cns-blue-light text-white px-2 py-1 rounded text-xs uppercase">
+              {user.rol}
+            </span>
+            <button
+              onClick={handleLogout}
+              className="bg-white text-cns-blue px-3 py-1 rounded hover:bg-gray-100 text-sm"
+            >
+              Cerrar Sesión
+            </button>
           </div>
         </div>
       </nav>
 
-      {/* Contenido principal */}
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          {/* Tarjetas de resumen */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white rounded-lg shadow p-6 border-l-4 border-cns-blue">
-              <h3 className="text-lg font-semibold text-cns-blue-dark mb-2">Pacientes del día</h3>
-              <p className="text-3xl font-bold text-cns-blue">24</p>
-            </div>
-            
-            <div className="bg-white rounded-lg shadow p-6 border-l-4 border-cns-blue-light">
-              <h3 className="text-lg font-semibold text-cns-blue-dark mb-2">Citas pendientes</h3>
-              <p className="text-3xl font-bold text-cns-blue">8</p>
-            </div>
-            
-            <div className="bg-white rounded-lg shadow p-6 border-l-4 border-green-500">
-              <h3 className="text-lg font-semibold text-cns-blue-dark mb-2">Disponibilidad</h3>
-              <p className="text-3xl font-bold text-green-600">65%</p>
-            </div>
-          </div>
+      {/* Contenido */}
+      <main className="flex-grow max-w-7xl mx-auto p-6">
+        <h2 className="text-2xl font-bold text-cns-blue-dark mb-6">
+          Panel del Médico
+        </h2>
 
-          {/* Área principal */}
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-cns-blue-dark mb-4">
-              Panel de Control - CNS
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="p-4 bg-blue-50 rounded-lg">
-                <h3 className="font-semibold text-cns-blue">Accesos Rápidos</h3>
-                <ul className="mt-2 space-y-2">
-                  <li className="text-cns-blue-light hover:text-cns-blue cursor-pointer">• Gestión de Citas</li>
-                  <li className="text-cns-blue-light hover:text-cns-blue cursor-pointer">• Historias Clínicas</li>
-                  <li className="text-cns-blue-light hover:text-cns-blue cursor-pointer">• Reportes Médicos</li>
-                </ul>
-              </div>
-              
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <h3 className="font-semibold text-cns-blue">Información de Usuario</h3>
-                <div className="mt-2 text-sm text-gray-600">
-                  <p>📧 Email: {user.email}</p>
-                  <p>👤 Rol: {user.rol}</p>
-                  <p>🏥 Sistema: Caja Nacional de Salud</p>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Estadísticas */}
+          <DashboardCard
+            title="📊 Estadísticas"
+            description="Visualiza los casos registrados y el seguimiento de enfermedades respiratorias."
+            color="from-cns-blue to-cns-blue-light"
+            onClick={() => navigate("/estadisticas")}
+          />
+
+          {/* Horarios */}
+          <DashboardCard
+            title="🕒 Horarios"
+            description="Configura tus horarios disponibles para atender citas médicas."
+            color="from-green-600 to-green-400"
+            onClick={() => navigate("/horarios")}
+          />
+
+          {/* Citas */}
+          <DashboardCard
+            title="📅 Citas"
+            description="Consulta las citas programadas con tus pacientes."
+            color="from-yellow-500 to-yellow-400"
+            onClick={() => navigate("/citas")}
+          />
         </div>
-      </div>
+      </main>
 
-      {/* Footer CNS */}
-      <footer className="bg-cns-blue-dark mt-8 py-4">
-        <div className="max-w-7xl mx-auto px-4 text-center text-white text-sm">
-          © {new Date().getFullYear()} Caja Nacional de Salud - Bolivia • 
-          Sistema de Gestión Médica • Versión 1.0
+      {/* Footer */}
+      <footer className="bg-cns-blue-dark py-4 mt-8">
+        <div className="text-center text-white text-sm">
+          © {new Date().getFullYear()} Caja Nacional de Salud - Bolivia • Sistema Médico CNS
         </div>
       </footer>
     </div>
   );
 }
+
+interface CardProps {
+  title: string;
+  description: string;
+  color: string;
+  onClick: () => void;
+}
+
+const DashboardCard: React.FC<CardProps> = ({ title, description, color, onClick }) => {
+
+  return (
+    <div
+      onClick={onClick}
+      className={`cursor-pointer bg-gradient-to-b ${color} rounded-xl shadow-lg p-6 text-white hover:scale-105 transition-transform`}
+    >
+      <h3 className="text-xl font-semibold">{title}</h3>
+      <p className="mt-3 text-sm opacity-90">{description}</p>
+    </div>
+  );
+}
+export default Dashboard;

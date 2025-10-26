@@ -52,4 +52,12 @@ function setupAssociations() {
 setupAssociations();
 
 // Exportar modelos y sequelize
-module.exports = { models, setupAssociations };
+module.exports = {
+  sequelize,
+  Usuario,
+  Paciente,
+  CitaMedica,
+  Prediagnostico,
+  HorarioMedico,
+  Sintoma
+};

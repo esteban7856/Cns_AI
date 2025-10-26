@@ -35,12 +35,15 @@ export default function Login() {
       // Login normal
       localStorage.setItem("token", res.token);
       localStorage.setItem("user", JSON.stringify({
+        id: res.id, 
         email: res.email,
         rol: res.rol,
         primerIngreso: res.primerIngreso,
         nombre: res.nombre,
-        apellido: res.apellido
+        apellido: res.apellido,
+        token: res.token
       }));
+
 
       if (res.primerIngreso) {
         navigate("/cambiar-password");
