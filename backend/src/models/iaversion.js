@@ -1,3 +1,5 @@
+const { sequelize } = require('../config/db');  // Correcto
+
 const IAVersion = sequelize.define('IAVersion', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     version: { type: DataTypes.STRING, allowNull: false },

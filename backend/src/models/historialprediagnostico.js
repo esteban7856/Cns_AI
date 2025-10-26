@@ -1,3 +1,5 @@
+const { sequelize } = require('../config/db');  // Correcto
+const { DataTypes } = require('sequelize');
 const HistorialPrediagnostico = sequelize.define('HistorialPrediagnostico', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     sintomas: { type: DataTypes.TEXT, allowNull: false },

@@ -8,11 +8,11 @@ module.exports = {
     extend: {
       colors: {
         'cns': {
-          dark: '#004b44',
-          medium: '#316963',
-          darkest: '#002f26',
-          light: '#5c8884',
-          DEFAULT: '#004b44',
+          "cns-blue": "#004B43",
+          "cns-blue-light": "#00796B",
+          "cns-blue-dark": "#002F2A",
+          "cns-green": "#00A676",
+          "cns-gray": "#F5F7F9",
         }
       },
       fontFamily: {

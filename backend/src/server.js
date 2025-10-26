@@ -9,6 +9,7 @@ const usuariosRoutes = require('./routes/usuarios');
 const pacienteRoutes = require('./routes/pacientes'); 
 const { sequelize } = require('./config/db'); 
 const citasRouter = require('./routes/citas');
+const horariosRouter = require('./routes/horarios');  
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -22,6 +23,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/pacientes', pacienteRoutes);
 app.use('/api/citas', citasRouter);
+app.use('/api/horarios', horariosRouter);
 
 // Inicialización del servidor
 async function start() {

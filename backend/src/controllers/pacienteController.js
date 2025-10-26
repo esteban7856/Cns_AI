@@ -1,4 +1,4 @@
-const { Paciente, Usuario } = require('../models');
+const { CitaMedica, Paciente, Usuario } = require('../models');
 const { Op } = require('sequelize');
 
 // Crear un nuevo paciente (hijo)

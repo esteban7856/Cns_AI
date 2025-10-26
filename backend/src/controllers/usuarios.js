@@ -30,4 +30,20 @@ const loginUsuario = async (req, res) => {
   }
 };
 
-module.exports = { loginUsuario };
+// Obtener todos los médicos
+const obtenerMedicos = async (req, res) => {
+  try {
+    const medicos = await Usuario.findAll({
+      where: { rol: 'medico' },
+      attributes: ['id', 'nombre', 'apellido', 'email', 'fecha_registro']
+    });
+
+    res.json(medicos);
+  } catch (error) {
+    console.error('Error al obtener médicos:', error);
+    res.status(500).json({ mensaje: 'Error al obtener médicos', error: error.message });
+  }
+};
+
+
+module.exports = { loginUsuario, obtenerMedicos };

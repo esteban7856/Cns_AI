@@ -7,8 +7,10 @@
       if (!req.usuario || !req.usuario.rol) {
         return res.status(403).json({ mensaje: 'No se pudo verificar el rol del usuario' });
       }
+        const rolUsuario = req.usuario.rol.toLowerCase();
+        const permitidos = rolesPermitidos.map(r => r.toLowerCase());
 
-      if (rolesPermitidos.includes(req.usuario.rol)) {
+      if (permitidos.includes(rolUsuario)) {
         next();
       } else {
         res.status(403).json({ mensaje: 'No tienes permiso para realizar esta acción' });
