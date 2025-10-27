@@ -132,7 +132,7 @@
         include: [
           { model: Paciente, as: 'Paciente' },
           { model: Prediagnostico, as: 'Prediagnostico' },
-          { model: Usuario, as: 'Usuario' }
+          { model: Usuario, as: 'medico' }
         ],
         order: [[sort, order.toUpperCase() === 'DESC' ? 'DESC' : 'ASC']],
         limit: parseInt(limit, 10),

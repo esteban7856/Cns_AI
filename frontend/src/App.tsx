@@ -5,6 +5,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Dashboard from "./pages/Dashboard";
 import ChangePassword from "./pages/ChangePassword";
 import Horarios from "./pages/Horarios";
+import Citas from "./pages/Citas";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/cambiar-password" element={<ChangePassword />} />
         <Route path="*" element={<Navigate to="/login" />} />
         <Route path="/horarios" element={<Horarios />} />
+        <Route path="/citas" element={<Citas />} />
       </Routes>
     </Router>
   );
