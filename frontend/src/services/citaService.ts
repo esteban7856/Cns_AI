@@ -21,7 +21,7 @@ export interface Cita {
   };
 }
 
-/** 🔹 Obtener citas del médico autenticado */
+/**   Obtener citas del médico autenticado */
 export async function getCitasMedico(): Promise<Cita[]> {
   const user = getCurrentUser();
   if (!user || !user.rol || user.rol !== "medico") {
@@ -47,7 +47,7 @@ export async function getCitasMedico(): Promise<Cita[]> {
   }
 }
 
-/** 🔹 Cambiar estado de una cita */
+/**   Cambiar estado de una cita */
 export async function actualizarEstadoCita(
   id: number,
   nuevoEstado: "pendiente" | "confirmada" | "cancelada" | "finalizada"

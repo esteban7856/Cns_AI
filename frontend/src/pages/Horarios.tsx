@@ -21,7 +21,7 @@ const Horarios: React.FC = () => {
       const data = await getHorarios();
       setHorarios(data);
     } catch (error) {
-      console.error("❌ Error al cargar horarios:", error);
+      console.error("Error al cargar horarios:", error);
     } finally {
       setLoading(false);
     }
@@ -39,7 +39,7 @@ const Horarios: React.FC = () => {
 
     try {
       await createHorario(nuevo);
-      alert("Horario agregado ✅");
+      alert("Horario agregado");
       setNuevo({ dia_semana: "", hora_inicio: "", hora_fin: "" });
       cargarHorarios();
     } catch (error) {
@@ -177,7 +177,7 @@ const Horarios: React.FC = () => {
                 onClick={registrarHorario}
                 className="w-full bg-white text-[#004B43] px-6 py-4 rounded-xl hover:shadow-lg transform hover:scale-105 transition-all duration-300 font-semibold flex items-center justify-center space-x-2 hover:bg-gray-100"
               >
-                <span>➕</span>
+                <span></span>
                 <span>Agregar Horario</span>
               </button>
             </div>
@@ -204,7 +204,7 @@ const Horarios: React.FC = () => {
               onClick={cargarHorarios}
               className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl transition-colors duration-300 flex items-center space-x-2 border border-white/20"
             >
-              <span>🔄</span>
+              <span></span>
               <span>Actualizar</span>
             </button>
           </div>
@@ -281,7 +281,7 @@ const Horarios: React.FC = () => {
                           onClick={() => eliminarHorario(h.id)}
                           className="bg-red-500/20 hover:bg-red-500/30 text-white px-4 py-2 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 border border-red-500/30"
                         >
-                          <span>🗑️</span>
+                          <span></span>
                           <span>Eliminar</span>
                         </button>
                       </td>

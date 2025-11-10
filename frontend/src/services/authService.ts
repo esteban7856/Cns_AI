@@ -65,7 +65,7 @@ export const forgotPassword = async (email: string) => {
   return res.json();
 };
 
-// 🔹 Verificar código temporal (devuelve token temporal)
+//   Verificar código temporal (devuelve token temporal)
 export const verifyRecoveryCode = async (email: string, codigo: string) => {
   const res = await fetch(`${API_URL}/verificar-codigo-temporal`, {
     method: "POST",
@@ -81,7 +81,7 @@ export const verifyRecoveryCode = async (email: string, codigo: string) => {
   return res.json(); // → { mensaje, token }
 };
 
-// 🔹 Cambiar contraseña (primer ingreso)
+//   Cambiar contraseña (primer ingreso)
 export const cambiarPasswordPrimeraVez = async (nuevaContrasena: string) => {
   const token = localStorage.getItem("token") || localStorage.getItem("resetToken");
   if (!token) throw new Error("No hay token de autenticación");
@@ -103,7 +103,7 @@ export const cambiarPasswordPrimeraVez = async (nuevaContrasena: string) => {
   return res.json();
 };
 
-// 🔹 Reset password (usa token temporal del paso anterior)
+//   Reset password (usa token temporal del paso anterior)
 export const resetPassword = async (resetToken: string, nuevaContrasena: string) => {
   const res = await fetch(`${API_URL}/reset-password`, {
     method: "POST",

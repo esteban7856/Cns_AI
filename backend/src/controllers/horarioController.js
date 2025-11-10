@@ -4,18 +4,18 @@ const { HorarioMedico, CitaMedica, Usuario } = require('../models');
 
 const { Op } = require('sequelize');
 
-// 🔹 Crear horario
+// Crear horario
 exports.crearHorario = async (req, res) => {
   try {
     const { dia_semana, hora_inicio, hora_fin } = req.body;
     const medico_id = req.usuario.id; // ID del médico autenticado
 
-    console.log(`🔑 Médico autenticado: ${medico_id}`);
+    console.log(`Médico autenticado: ${medico_id}`);
 
     // Verificar que el usuario autenticado sea un médico
     const usuario = await Usuario.findByPk(medico_id);
     if (!usuario || usuario.rol !== 'medico') {
-      console.log(`🚫 El usuario con ID ${medico_id} no es un médico.`);
+      console.log(`El usuario con ID ${medico_id} no es un médico.`);
       return res.status(403).json({ mensaje: 'Solo los médicos pueden registrar horarios' });
     }
 
@@ -35,11 +35,11 @@ exports.crearHorario = async (req, res) => {
   }
 };
 
-// 🔹 Obtener horarios por médico
+//   Obtener horarios por médico
 exports.obtenerHorariosPorMedico = async (req, res) => {
   try {
     const { medico_id } = req.params;
-    console.log(`🔍 Obteniendo horarios para el médico ID: ${medico_id}`);
+    console.log(` Obteniendo horarios para el médico ID: ${medico_id}`);
 
     // Obtener los horarios de un médico
     const horarios = await HorarioMedico.findAll({
@@ -48,11 +48,11 @@ exports.obtenerHorariosPorMedico = async (req, res) => {
     });
 
     if (horarios.length === 0) {
-      console.log(`🚫 El médico ID ${medico_id} no tiene horarios registrados.`);
+      console.log(` El médico ID ${medico_id} no tiene horarios registrados.`);
       return res.status(404).json({ mensaje: 'El médico no tiene horarios registrados' });
     }
 
-    console.log(`✅ Horarios encontrados para el médico ID ${medico_id}:`, horarios);
+    console.log(` Horarios encontrados para el médico ID ${medico_id}:`, horarios);
     res.json(horarios);
   } catch (error) {
     console.error('Error al obtener horarios:', error);
@@ -60,16 +60,16 @@ exports.obtenerHorariosPorMedico = async (req, res) => {
   }
 };
 
-// 🔹 Eliminar horario
+//   Eliminar horario
 exports.eliminarHorario = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log(`🗑️ Eliminando horario con ID ${id}`);
+    console.log(` Eliminando horario con ID ${id}`);
 
     // Eliminar horario por ID
     await HorarioMedico.destroy({ where: { id } });
 
-    console.log(`✅ Horario con ID ${id} eliminado correctamente.`);
+    console.log(` Horario con ID ${id} eliminado correctamente.`);
     res.json({ mensaje: 'Horario eliminado correctamente' });
   } catch (error) {
     console.error('Error al eliminar horario:', error);
@@ -77,7 +77,7 @@ exports.eliminarHorario = async (req, res) => {
   }
 };
 
-// 🔹 Obtener disponibilidad de un médico en una fecha específica
+//   Obtener disponibilidad de un médico en una fecha específica
 exports.obtenerDisponibilidad = async (req, res) => {
   try {
     const { medico_id } = req.params;
@@ -91,9 +91,9 @@ exports.obtenerDisponibilidad = async (req, res) => {
     const dias = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
     const dia_semana = dias[fechaObj.getDay()]; // Determinar el día según la fecha
 
-    console.log(`🔎 Verificando horarios del médico ${medico_id} para el ${dia_semana}`);
+    console.log(` Verificando horarios del médico ${medico_id} para el ${dia_semana}`);
 
-    // ✅ 1️⃣ Buscar horarios activos SOLO del día seleccionado
+    // Buscar horarios activos SOLO del día seleccionado
     const horarios = await HorarioMedico.findAll({
       where: { medico_id, dia_semana, estado: true },
       order: [["hora_inicio", "ASC"]],
@@ -107,7 +107,7 @@ exports.obtenerDisponibilidad = async (req, res) => {
       });
     }
 
-    // ✅ 2️⃣ Obtener citas existentes en ese día
+    // Obtener citas existentes en ese día
     const fechaInicio = new Date(`${fecha}T00:00:00`);
     const fechaFin = new Date(`${fecha}T23:59:59`);
 
@@ -120,13 +120,13 @@ exports.obtenerDisponibilidad = async (req, res) => {
       attributes: ["fecha_cita"],
     });
 
-    // ✅ 3️⃣ Convertir citas existentes a horas ocupadas
+    // Convertir citas existentes a horas ocupadas
     const ocupadas = citas.map((c) => {
       const hora = new Date(c.fecha_cita);
-      return hora.toISOString().substring(11, 16); // formato HH:mm
+      return hora.toISOString().substring(11, 16); 
     });
 
-    // ✅ 4️⃣ Generar todas las horas disponibles según los horarios del día
+    //  Generar todas las horas disponibles según los horarios del día
     const disponibles = [];
     horarios.forEach((h) => {
       const [hInicio, mInicio] = h.hora_inicio.split(":").map(Number);
@@ -150,7 +150,7 @@ exports.obtenerDisponibilidad = async (req, res) => {
       ocupadas,
     });
   } catch (error) {
-    console.error("❌ Error al obtener disponibilidad:", error);
+    console.error(" Error al obtener disponibilidad:", error);
     res.status(500).json({
       mensaje: "Error al obtener disponibilidad",
       error: error.message,

@@ -13,7 +13,7 @@ export interface Horario {
   medico_id?: number;
 }
 
-/** 🔹 Obtener todos los horarios del médico autenticado */
+/**   Obtener todos los horarios del médico autenticado */
 export async function getHorarios(): Promise<Horario[]> {
   const user = getCurrentUser();
   if (!user?.token) throw new Error("Usuario no autenticado");
@@ -32,7 +32,7 @@ export async function getHorarios(): Promise<Horario[]> {
   }
 }
 
-/** 🔹 Crear un nuevo horario */
+/**   Crear un nuevo horario */
 export async function createHorario(data: {
   dia_semana: string;
   hora_inicio: string;
@@ -61,7 +61,7 @@ export async function createHorario(data: {
   }
 }
 
-/** 🔹 Eliminar un horario */
+/**   Eliminar un horario */
 export async function deleteHorario(id: number): Promise<string> {
   const user = getCurrentUser();
   if (!user?.token) throw new Error("Usuario no autenticado");

@@ -20,23 +20,23 @@ const Dashboard: React.FC = () => {
   if (!user) return <></>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-[#004B43] to-[#00695C] flex flex-col">
       {/* Header Mejorado */}
-      <nav className="bg-gradient-to-r from-[#004B43] to-[#00695C] shadow-xl">
+      <nav className="bg-white/10 backdrop-blur-sm border-b border-white/20">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center text-white">
           <div className="flex items-center space-x-3">
-            <div className="bg-white/20 p-2 rounded-xl">
+            <div className="bg-white/20 p-3 rounded-xl border border-white/30">
               <span className="text-2xl">🏥</span>
             </div>
             <div>
               <h1 className="text-2xl font-bold">CNS Salud Infantil</h1>
-              <p className="text-blue-100 text-sm">Sistema Médico Integral</p>
+              <p className="text-white/80 text-sm">Sistema Médico Integral</p>
             </div>
           </div>
           <div className="flex items-center space-x-4">
             <div className="text-right">
               <p className="font-semibold">Dr. {user.nombre} {user.apellido}</p>
-              <p className="text-blue-100 text-sm">Bienvenido al sistema</p>
+              <p className="text-white/80 text-sm">Bienvenido al sistema</p>
             </div>
             <div className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full border border-white/30">
               <span className="text-sm font-medium capitalize">{user.rol}</span>
@@ -45,7 +45,7 @@ const Dashboard: React.FC = () => {
               onClick={handleLogout}
               className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-all duration-300 border border-white/30 backdrop-blur-sm flex items-center space-x-2"
             >
-              <span>🚪</span>
+              <span></span>
               <span>Salir</span>
             </button>
           </div>
@@ -60,7 +60,7 @@ const Dashboard: React.FC = () => {
               <h2 className="text-4xl font-bold mb-4">
                 ¡Bienvenido, Dr. {user.nombre}! 👨‍⚕️
               </h2>
-              <p className="text-blue-100 text-lg max-w-2xl">
+              <p className="text-white/80 text-lg max-w-2xl">
                 Estamos comprometidos con la salud materno infantil. 
                 Aquí puedes gestionar tus pacientes, citas y estadísticas de manera eficiente.
               </p>
@@ -69,7 +69,7 @@ const Dashboard: React.FC = () => {
               <div className="text-center">
                 <div className="text-3xl mb-2">📊</div>
                 <p className="font-semibold">Sistema Actualizado</p>
-                <p className="text-blue-100 text-sm">Versión 2.1</p>
+                <p className="text-white/80 text-sm">Versión 2.1</p>
               </div>
             </div>
           </div>
@@ -83,7 +83,7 @@ const Dashboard: React.FC = () => {
           <DashboardCard
             title="📊 Panel de Estadísticas"
             description="Monitorea los casos de enfermedades respiratorias y el progreso de tus pacientes con gráficos interactivos."
-            color="from-blue-500 to-blue-600"
+            color="from-green-600 to-green-700"
             icon="📈"
             onClick={() => navigate("/estadisticas")}
           />
@@ -91,7 +91,7 @@ const Dashboard: React.FC = () => {
           <DashboardCard
             title="🕒 Gestión de Horarios"
             description="Organiza y configura tus horarios de atención para una mejor planificación de consultas."
-            color="from-green-500 to-green-600"
+            color="from-emerald-600 to-emerald-700"
             icon="⏰"
             onClick={() => navigate("/horarios")}
           />
@@ -99,89 +99,145 @@ const Dashboard: React.FC = () => {
           <DashboardCard
             title="📅 Agenda de Citas"
             description="Consulta y gestiona todas las citas programadas con tus pacientes de manera organizada."
-            color="from-purple-500 to-purple-600"
+            color="from-teal-600 to-teal-700"
             icon="👥"
             onClick={() => navigate("/citas")}
           />
         </div>
 
-        {/* Sección de Acciones Rápidas */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
-          <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-            <span className="bg-gradient-to-r from-[#004B43] to-[#00695C] text-white p-2 rounded-lg mr-3">⚡</span>
-            Acciones Rápidas
+        {/* Sección de Información CNS */}
+        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-white/20">
+          <h3 className="text-2xl font-bold text-white mb-6 flex items-center">
+            <span className="bg-white/20 p-2 rounded-lg mr-3">🏛️</span>
+            Sobre la Caja Nacional de Salud
           </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <QuickAction 
-              icon="👶" 
-              label="Nuevo Paciente" 
-              onClick={() => navigate("/nuevo-paciente")}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <InfoCard 
+              icon="📅"
+              title="Fundación"
+              description="15 de abril de 1987"
+              detail="Más de 36 años de servicio"
             />
-            <QuickAction 
-              icon="📝" 
-              label="Registrar Consulta" 
-              onClick={() => navigate("/nueva-consulta")}
+            <InfoCard 
+              icon="👥"
+              title="Cobertura"
+              description="Trabajadores y familias"
+              detail="Atención a nivel nacional"
             />
-            <QuickAction 
-              icon="🔍" 
-              label="Buscar Paciente" 
-              onClick={() => navigate("/buscar-paciente")}
+            <InfoCard 
+              icon="🩺"
+              title="Prestaciones"
+              description="Salud integral"
+              detail="Riesgo común, profesional y maternidad"
             />
-            <QuickAction 
-              icon="📋" 
-              label="Reportes Médicos" 
-              onClick={() => navigate("/reportes")}
+            <InfoCard 
+              icon="🎯"
+              title="Misión"
+              description="Protección social"
+              detail="Cuidando el capital humano de Bolivia"
             />
+          </div>
+          
+          {/* Línea de tiempo histórica */}
+          <div className="mt-8 pt-6 border-t border-white/20">
+            <h4 className="text-lg font-semibold text-white mb-4">Nuestra Historia</h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <TimelineItem 
+                year="1956"
+                title="Inicio de actividades"
+                description="Creación del Seguro de la CNSS"
+              />
+              <TimelineItem 
+                year="1987"
+                title="Nueva identidad"
+                description="Cambio a Caja Nacional de Salud"
+              />
+              <TimelineItem 
+                year="Actualidad"
+                title="Expansión continua"
+                description="+65 años protegiendo la salud"
+              />
+            </div>
           </div>
         </div>
 
-        {/* Estadísticas Rápidas */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+        {/* Estadísticas Institucionales */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <StatCard 
-            title="Pacientes Activos" 
-            value="124" 
-            change="+12%" 
+            title="Años de Servicio" 
+            value="65+" 
+            change="Desde 1956" 
+            icon="🎂"
+            color="text-green-300"
+          />
+          <StatCard 
+            title="Afiliados" 
+            value="2M+" 
+            change="Cobertura nacional" 
             icon="👨‍👩‍👧‍👦"
-            color="text-blue-600"
+            color="text-emerald-300"
           />
           <StatCard 
-            title="Citas Hoy" 
-            value="8" 
-            change="+2" 
-            icon="📅"
-            color="text-green-600"
-          />
-          <StatCard 
-            title="Consultas Mes" 
-            value="45" 
-            change="+15%" 
+            title="Unidades Médicas" 
+            value="150+" 
+            change="En todo el país" 
             icon="🏥"
-            color="text-purple-600"
+            color="text-teal-300"
           />
           <StatCard 
-            title="Satisfacción" 
-            value="96%" 
-            change="+3%" 
-            icon="⭐"
-            color="text-yellow-600"
+            title="Profesionales" 
+            value="5,000+" 
+            change="Equipo médico" 
+            icon="👨‍⚕️"
+            color="text-cyan-300"
           />
+        </div>
+
+        {/* Compromisos y Valores */}
+        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+          <h3 className="text-2xl font-bold text-white mb-6 flex items-center">
+            <span className="bg-white/20 p-2 rounded-lg mr-3">⭐</span>
+            Nuestros Compromisos
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <CommitmentCard 
+              icon="❤️"
+              title="Calidad en Atención"
+              description="Brindamos servicios médicos con los más altos estándares de calidad y calidez humana."
+            />
+            <CommitmentCard 
+              icon="🛡️"
+              title="Protección Social"
+              description="Garantizamos la seguridad social integral para todos nuestros afiliados y sus familias."
+            />
+            <CommitmentCard 
+              icon="🌱"
+              title="Innovación Continua"
+              description="Implementamos tecnologías modernas para mejorar la experiencia de nuestros usuarios."
+            />
+            <CommitmentCard 
+              icon="🤝"
+              title="Trabajo en Equipo"
+              description="Fomentamos la colaboración entre profesionales para una atención integral al paciente."
+            />
+          </div>
         </div>
       </main>
 
       {/* Footer Mejorado */}
-      <footer className="bg-gradient-to-r from-[#004B43] to-[#00695C] py-8 mt-auto">
+      <footer className="bg-white/10 backdrop-blur-sm border-t border-white/20 py-8 mt-auto">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center text-white">
             <div className="flex items-center space-x-3 mb-4 md:mb-0">
-              <span className="text-2xl">❤️</span>
+              <span className="text-2xl">🇧🇴</span>
               <div>
                 <p className="font-semibold">Caja Nacional de Salud - Bolivia</p>
-                <p className="text-blue-100 text-sm">Comprometidos con tu salud</p>
+                <p className="text-white/80 text-sm">"Protegiendo tu salud desde 1956"</p>
               </div>
             </div>
             <div className="text-center md:text-right">
-              <p className="text-blue-100">© {new Date().getFullYear()} Sistema Médico CNS</p>
-              <p className="text-blue-200 text-sm">Versión 2.1 • Todos los derechos reservados</p>
+              <p className="text-white/80">© {new Date().getFullYear()} Sistema Médico CNS</p>
+              <p className="text-white/60 text-sm">Versión 2.1 • Todos los derechos reservados</p>
             </div>
           </div>
         </div>
@@ -210,8 +266,8 @@ const DashboardCard: React.FC<CardProps> = ({ title, description, color, icon, o
           {icon}
         </div>
         <h3 className="text-xl font-bold mb-3">{title}</h3>
-        <p className="text-blue-100 text-sm leading-relaxed">{description}</p>
-        <div className="mt-4 flex items-center text-blue-200 group-hover:text-white transition-colors">
+        <p className="text-white/90 text-sm leading-relaxed">{description}</p>
+        <div className="mt-4 flex items-center text-white/80 group-hover:text-white transition-colors">
           <span className="text-sm font-medium">Acceder</span>
           <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
         </div>
@@ -220,21 +276,41 @@ const DashboardCard: React.FC<CardProps> = ({ title, description, color, icon, o
   );
 }
 
-interface QuickActionProps {
+interface InfoCardProps {
   icon: string;
-  label: string;
-  onClick: () => void;
+  title: string;
+  description: string;
+  detail: string;
 }
 
-const QuickAction: React.FC<QuickActionProps> = ({ icon, label, onClick }) => {
+const InfoCard: React.FC<InfoCardProps> = ({ icon, title, description, detail }) => {
   return (
-    <button
-      onClick={onClick}
-      className="bg-gray-50 hover:bg-white border border-gray-200 rounded-xl p-4 text-center transition-all duration-300 hover:shadow-md hover:border-[#004B43] group"
-    >
-      <div className="text-2xl mb-2 group-hover:scale-110 transition-transform">{icon}</div>
-      <p className="text-gray-700 font-medium text-sm group-hover:text-[#004B43]">{label}</p>
-    </button>
+    <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:border-white/20 transition-colors">
+      <div className="text-2xl mb-2">{icon}</div>
+      <h4 className="font-semibold text-white mb-1">{title}</h4>
+      <p className="text-white font-medium text-sm">{description}</p>
+      <p className="text-white/70 text-xs mt-1">{detail}</p>
+    </div>
+  );
+}
+
+interface TimelineItemProps {
+  year: string;
+  title: string;
+  description: string;
+}
+
+const TimelineItem: React.FC<TimelineItemProps> = ({ year, title, description }) => {
+  return (
+    <div className="flex items-start space-x-3">
+      <div className="bg-white/20 text-white px-3 py-1 rounded-full text-sm font-semibold min-w-16 text-center">
+        {year}
+      </div>
+      <div>
+        <h5 className="font-semibold text-white text-sm">{title}</h5>
+        <p className="text-white/70 text-xs">{description}</p>
+      </div>
+    </div>
   );
 }
 
@@ -247,18 +323,32 @@ interface StatCardProps {
 }
 
 const StatCard: React.FC<StatCardProps> = ({ title, value, change, icon, color }) => {
-  const isPositive = change.includes('+');
-  
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/15 transition-colors">
       <div className="flex justify-between items-start mb-4">
-        <div className={`text-2xl ${color}`}>{icon}</div>
-        <span className={`text-sm font-semibold ${isPositive ? 'text-green-600' : 'text-red-600'} bg-${isPositive ? 'green' : 'red'}-50 px-2 py-1 rounded-full`}>
-          {change}
-        </span>
+        <div className={`text-3xl ${color}`}>{icon}</div>
       </div>
-      <h4 className="text-gray-600 text-sm font-medium mb-2">{title}</h4>
-      <p className="text-3xl font-bold text-gray-800">{value}</p>
+      <h4 className="text-white/80 text-sm font-medium mb-2">{title}</h4>
+      <p className="text-3xl font-bold text-white mb-1">{value}</p>
+      <p className="text-white/60 text-sm">{change}</p>
+    </div>
+  );
+}
+
+interface CommitmentCardProps {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+const CommitmentCard: React.FC<CommitmentCardProps> = ({ icon, title, description }) => {
+  return (
+    <div className="flex items-start space-x-4 p-4 bg-white/5 rounded-xl border border-white/10">
+      <div className="text-2xl flex-shrink-0">{icon}</div>
+      <div>
+        <h4 className="font-semibold text-white mb-2">{title}</h4>
+        <p className="text-white/80 text-sm">{description}</p>
+      </div>
     </div>
   );
 }

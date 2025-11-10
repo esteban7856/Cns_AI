@@ -87,31 +87,31 @@ export default function CitaPage() {
             titulo="Total" 
             valor={estadisticas.total} 
             color="from-blue-500 to-blue-600"
-            icono="📋"
+            icono=""
           />
           <StatCard 
             titulo="Confirmadas" 
             valor={estadisticas.confirmadas} 
             color="from-green-500 to-green-600"
-            icono="✅"
+            icono=""
           />
           <StatCard 
             titulo="Pendientes" 
             valor={estadisticas.pendientes} 
             color="from-yellow-500 to-yellow-600"
-            icono="⏳"
+            icono=""
           />
           <StatCard 
             titulo="Canceladas" 
             valor={estadisticas.canceladas} 
             color="from-red-500 to-red-600"
-            icono="❌"
+            icono=""
           />
           <StatCard 
             titulo="Finalizadas" 
             valor={estadisticas.finalizadas} 
             color="from-gray-500 to-gray-600"
-            icono="🏁"
+            icono=""
           />
         </div>
 
