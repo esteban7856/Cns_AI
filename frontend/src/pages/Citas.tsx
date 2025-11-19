@@ -22,23 +22,23 @@ export default function CitaPage() {
       setLoading(false);
     }
   }
-    const cambiarEstadoCita = async (
+
+  const cambiarEstadoCita = async (
     citaId: number,
     nuevoEstado: "pendiente" | "confirmada" | "cancelada" | "finalizada"
-    ) => {
+  ) => {
     setActualizando(citaId);
     try {
-        await actualizarEstadoCita(citaId, nuevoEstado);
-        setCitas(citas.map(c => 
+      await actualizarEstadoCita(citaId, nuevoEstado);
+      setCitas(citas.map(c => 
         c.id === citaId ? { ...c, estado: nuevoEstado } : c
-        ));
+      ));
     } catch (err: any) {
-        alert(`Error al actualizar estado: ${err.message}`);
+      alert(`Error al actualizar estado: ${err.message}`);
     } finally {
-        setActualizando(null);
+      setActualizando(null);
     }
-    };
-
+  };
 
   const citasFiltradas = filtroEstado === "todos" 
     ? citas 
@@ -52,29 +52,32 @@ export default function CitaPage() {
     finalizadas: citas.filter(c => c.estado === "finalizada").length,
   };
 
- const estadosDisponibles: Array<"pendiente" | "confirmada" | "cancelada" | "finalizada"> = [
-  "pendiente",
-  "confirmada",
-  "cancelada",
-  "finalizada",
-];
+  const estadosDisponibles: Array<"pendiente" | "confirmada" | "cancelada" | "finalizada"> = [
+    "pendiente",
+    "confirmada",
+    "cancelada",
+    "finalizada",
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#004B43] to-[#00695C]">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <nav className="bg-white/10 backdrop-blur-sm border-b border-white/20">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center text-white">
+      <nav className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <div className="bg-white/20 p-3 rounded-xl border border-white/30">
-              <span className="text-2xl">📅</span>
+            <div className="bg-[#004B43] p-3 rounded-xl">
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
             </div>
             <div>
-              <h1 className="text-2xl font-bold">Gestión de Citas Médicas</h1>
-              <p className="text-white/80 text-sm">Administra y actualiza el estado de las citas</p>
+              <h1 className="text-2xl font-bold text-gray-800">Gestión de Citas Médicas</h1>
+              <p className="text-gray-600 text-sm">Administra y actualiza el estado de las citas</p>
             </div>
           </div>
-          <div className="bg-white/10 px-4 py-2 rounded-xl border border-white/20">
-            <p className="text-sm text-white/80">Total de citas</p>
-            <p className="text-2xl font-bold text-white">{estadisticas.total}</p>
+          <div className="bg-gray-50 px-4 py-2 rounded-xl border border-gray-200">
+            <p className="text-sm text-gray-600">Total de citas</p>
+            <p className="text-2xl font-bold text-[#004B43]">{estadisticas.total}</p>
           </div>
         </div>
       </nav>
@@ -87,50 +90,70 @@ export default function CitaPage() {
             titulo="Total" 
             valor={estadisticas.total} 
             color="from-blue-500 to-blue-600"
-            icono=""
+            icono={
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+            }
           />
           <StatCard 
             titulo="Confirmadas" 
             valor={estadisticas.confirmadas} 
             color="from-green-500 to-green-600"
-            icono=""
+            icono={
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            }
           />
           <StatCard 
             titulo="Pendientes" 
             valor={estadisticas.pendientes} 
             color="from-yellow-500 to-yellow-600"
-            icono=""
+            icono={
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            }
           />
           <StatCard 
             titulo="Canceladas" 
             valor={estadisticas.canceladas} 
             color="from-red-500 to-red-600"
-            icono=""
+            icono={
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            }
           />
           <StatCard 
             titulo="Finalizadas" 
             valor={estadisticas.finalizadas} 
             color="from-gray-500 to-gray-600"
-            icono=""
+            icono={
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            }
           />
         </div>
 
         {/* Filtros */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-6 border border-white/20">
+        <div className="bg-white rounded-2xl p-6 mb-6 shadow-sm border border-gray-200">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
             <div>
-              <h2 className="text-xl font-bold text-white mb-2">Filtrar por estado</h2>
-              <p className="text-white/80 text-sm">Visualiza las citas según su estado actual</p>
+              <h2 className="text-xl font-bold text-gray-800 mb-2">Filtrar por estado</h2>
+              <p className="text-gray-600 text-sm">Visualiza las citas según su estado actual</p>
             </div>
             <div className="flex flex-wrap gap-2">
               {["todos", "pendiente", "confirmada", "cancelada", "finalizada"].map((estado) => (
                 <button
                   key={estado}
                   onClick={() => setFiltroEstado(estado)}
-                  className={`px-4 py-2 rounded-xl transition-all duration-300 capitalize ${
+                  className={`px-4 py-2 rounded-xl transition-all duration-300 capitalize border ${
                     filtroEstado === estado
-                      ? "bg-white text-[#004B43] font-semibold"
-                      : "bg-white/10 text-white hover:bg-white/20 border border-white/20"
+                      ? "bg-[#004B43] text-white font-semibold border-[#004B43]"
+                      : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
                   }`}
                 >
                   {estado}
@@ -143,30 +166,34 @@ export default function CitaPage() {
         {loading ? (
           <div className="text-center py-20">
             <div className="inline-flex flex-col items-center space-y-4">
-              <div className="animate-spin rounded-full h-16 w-16 border-4 border-white border-t-transparent"></div>
-              <p className="text-white text-lg">Cargando citas médicas...</p>
-              <p className="text-white/70 text-sm">Estamos obteniendo la información más reciente</p>
+              <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#004B43] border-t-transparent"></div>
+              <p className="text-gray-700 text-lg">Cargando citas médicas...</p>
+              <p className="text-gray-500 text-sm">Estamos obteniendo la información más reciente</p>
             </div>
           </div>
         ) : error ? (
-          <div className="bg-red-500/20 border border-red-500/30 rounded-2xl p-8 text-center">
-            <div className="text-6xl mb-4">😔</div>
-            <h3 className="text-xl font-bold text-white mb-2">Error al cargar las citas</h3>
-            <p className="text-white/80">{error}</p>
+          <div className="bg-red-50 border border-red-200 rounded-2xl p-8 text-center">
+            <svg className="w-16 h-16 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h3 className="text-xl font-bold text-gray-800 mb-2">Error al cargar las citas</h3>
+            <p className="text-gray-600 mb-4">{error}</p>
             <button 
               onClick={cargarCitas}
-              className="mt-4 bg-white text-[#004B43] px-6 py-3 rounded-xl hover:bg-gray-100 transition-colors font-semibold"
+              className="bg-[#004B43] text-white px-6 py-3 rounded-xl hover:bg-[#00382f] transition-colors font-semibold"
             >
               Reintentar
             </button>
           </div>
         ) : citasFiltradas.length === 0 ? (
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-12 text-center border border-white/20">
-            <div className="text-8xl mb-6">📅</div>
-            <h3 className="text-2xl font-bold text-white mb-3">
+          <div className="bg-white rounded-2xl p-12 text-center shadow-sm border border-gray-200">
+            <svg className="w-20 h-20 text-gray-400 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <h3 className="text-2xl font-bold text-gray-800 mb-3">
               {filtroEstado === "todos" ? "No hay citas registradas" : `No hay citas ${filtroEstado}s`}
             </h3>
-            <p className="text-white/80 max-w-md mx-auto mb-6">
+            <p className="text-gray-600 max-w-md mx-auto mb-6">
               {filtroEstado === "todos" 
                 ? "Cuando tus pacientes agenden citas, aparecerán aquí para que puedas gestionarlas."
                 : `No se encontraron citas con estado "${filtroEstado}". Prueba con otro filtro.`
@@ -175,43 +202,43 @@ export default function CitaPage() {
             {filtroEstado !== "todos" && (
               <button
                 onClick={() => setFiltroEstado("todos")}
-                className="bg-white text-[#004B43] px-6 py-3 rounded-xl hover:bg-gray-100 transition-colors font-semibold"
+                className="bg-[#004B43] text-white px-6 py-3 rounded-xl hover:bg-[#00382f] transition-colors font-semibold"
               >
                 Ver todas las citas
               </button>
             )}
           </div>
         ) : (
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/20">
+          <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-200">
             <div className="overflow-x-auto">
               <table className="min-w-full">
-                <thead className="bg-white/20">
+                <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-white uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
                       Fecha y Hora
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-white uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
                       Paciente
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-white uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
                       Motivo
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-white uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
                       Estado Actual
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-white uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
                       Cambiar Estado
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-white uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
                       Notas
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/20">
+                <tbody className="divide-y divide-gray-200">
                   {citasFiltradas.map((cita) => (
-                    <tr key={cita.id} className="hover:bg-white/10 transition-colors duration-300">
+                    <tr key={cita.id} className="hover:bg-gray-50 transition-colors duration-300">
                       <td className="px-6 py-4">
-                        <div className="text-white font-medium">
+                        <div className="text-gray-800 font-medium">
                           {new Date(cita.fecha_cita).toLocaleDateString("es-BO", {
                             weekday: 'short',
                             year: 'numeric',
@@ -219,7 +246,7 @@ export default function CitaPage() {
                             day: 'numeric'
                           })}
                         </div>
-                        <div className="text-white/70 text-sm">
+                        <div className="text-gray-600 text-sm">
                           {new Date(cita.fecha_cita).toLocaleTimeString("es-BO", {
                             hour: '2-digit',
                             minute: '2-digit'
@@ -227,15 +254,14 @@ export default function CitaPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-white font-semibold">
+                        <div className="text-gray-800 font-semibold">
                           {cita.Paciente
                             ? `${cita.Paciente.nombre} ${cita.Paciente.apellido}`
                             : "—"}
                         </div>
-                       
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-white max-w-xs">
+                        <div className="text-gray-700 max-w-xs">
                           {cita.motivo || "Consulta general"}
                         </div>
                       </td>
@@ -243,12 +269,12 @@ export default function CitaPage() {
                         <span
                           className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold capitalize ${
                             cita.estado === "confirmada"
-                              ? "bg-green-500/20 text-green-200 border border-green-500/30"
+                              ? "bg-green-100 text-green-800 border border-green-200"
                               : cita.estado === "cancelada"
-                              ? "bg-red-500/20 text-red-200 border border-red-500/30"
+                              ? "bg-red-100 text-red-800 border border-red-200"
                               : cita.estado === "finalizada"
-                              ? "bg-gray-500/20 text-gray-200 border border-gray-500/30"
-                              : "bg-yellow-500/20 text-yellow-200 border border-yellow-500/30"
+                              ? "bg-gray-100 text-gray-800 border border-gray-200"
+                              : "bg-yellow-100 text-yellow-800 border border-yellow-200"
                           }`}
                         >
                           {cita.estado}
@@ -269,12 +295,12 @@ export default function CitaPage() {
                                     : 'hover:scale-105'
                                 } ${
                                   estado === 'confirmada'
-                                    ? 'bg-green-500/20 text-green-200 border-green-500/30 hover:bg-green-500/30'
+                                    ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100'
                                     : estado === 'cancelada'
-                                    ? 'bg-red-500/20 text-red-200 border-red-500/30 hover:bg-red-500/30'
+                                    ? 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
                                     : estado === 'finalizada'
-                                    ? 'bg-gray-500/20 text-gray-200 border-gray-500/30 hover:bg-gray-500/30'
-                                    : 'bg-yellow-500/20 text-yellow-200 border-yellow-500/30 hover:bg-yellow-500/30'
+                                    ? 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100'
+                                    : 'bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100'
                                 }`}
                               >
                                 {actualizando === cita.id ? '...' : estado}
@@ -284,7 +310,7 @@ export default function CitaPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-white/80 max-w-xs text-sm">
+                        <div className="text-gray-600 max-w-xs text-sm">
                           {cita.notas || "Sin notas adicionales"}
                         </div>
                       </td>
@@ -298,12 +324,12 @@ export default function CitaPage() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white/10 backdrop-blur-sm border-t border-white/20 py-6 mt-8">
+      <footer className="bg-gray-100 border-t border-gray-200 py-6 mt-8">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <p className="text-white/80 text-sm">
+          <p className="text-gray-600 text-sm">
             © {new Date().getFullYear()} Caja Nacional de Salud - Bolivia • Sistema Médico CNS
           </p>
-          <p className="text-white/60 text-xs mt-1">
+          <p className="text-gray-500 text-xs mt-1">
             Comprometidos con la excelencia en atención médica
           </p>
         </div>
@@ -317,16 +343,16 @@ function StatCard({ titulo, valor, color, icono }: {
   titulo: string; 
   valor: number; 
   color: string; 
-  icono: string; 
+  icono: React.ReactNode; 
 }) {
   return (
     <div className={`bg-gradient-to-br ${color} rounded-2xl p-4 text-white shadow-lg`}>
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-white/80 text-sm font-medium">{titulo}</p>
+          <p className="text-white/90 text-sm font-medium">{titulo}</p>
           <p className="text-2xl font-bold">{valor}</p>
         </div>
-        <div className="text-2xl">
+        <div className="text-white">
           {icono}
         </div>
       </div>

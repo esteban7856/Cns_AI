@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import ChangePassword from "./pages/ChangePassword";
 import Horarios from "./pages/Horarios";
 import Citas from "./pages/Citas";
+import Estadisticas from "./pages/Estadisticas";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="*" element={<Navigate to="/login" />} />
         <Route path="/horarios" element={<Horarios />} />
         <Route path="/citas" element={<Citas />} />
+        <Route path="/estadisticas" element={<Estadisticas />} />
       </Routes>
     </Router>
   );
