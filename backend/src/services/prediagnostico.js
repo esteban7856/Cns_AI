@@ -24,14 +24,20 @@ async function crearPrediagnostico({ pacienteId, sintomas }) {
 
     // 2) Llamar al microservicio IA
     const iaResp = await axios.post(`${MICRO_IA_URL}/predict`, {
-      texto: sintomas,
-      paciente_id: pacienteId,
+    text: sintomas,          // ⚠️ CAMBIAR A "text"
+    paciente_id: pacienteId, // extra, FastAPI lo ignora
     });
 
     const iaData = iaResp.data;
-    const diagnostico = iaData.diagnóstico || iaData.diagnostico || 'Sin diagnóstico';
-    const probabilidad = iaData.confianza ?? iaData.probabilidad ?? 0;
-    const recomendaciones = iaData.nota || iaData.recomendaciones || null;
+
+    // Claves reales del micro
+    const diagnostico = iaData.diagnostico || 'Sin diagnóstico';
+    const probabilidad = iaData.probabilidad ?? iaData.confianza ?? 0;
+
+    // Para guardar algo en "recomendaciones" en prediagnosticos
+    const recomendaciones =
+    iaData.sugerencia || iaData.mensaje || null;
+
 
     // 3) Insertar en prediagnosticos
     const [prediagnostico] = await sequelize.query(
