@@ -1,5 +1,5 @@
 // controllers/prediagnostico.controller.js
-const prediagnosticoService = require('../services/prediagnostico.service');
+const prediagnosticoService = require('../services/prediagnostico');
 
 async function crearPrediagnosticoController(req, res) {
   try {
