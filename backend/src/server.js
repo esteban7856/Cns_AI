@@ -10,7 +10,7 @@ const pacienteRoutes = require('./routes/pacientes');
 const { sequelize } = require('./config/db'); 
 const citasRouter = require('./routes/citas');
 const horariosRouter = require('./routes/horarios');  
-const prediagnosticosRoutes = require('./routes/prediagnosticos.routes');
+const prediagnosticosRoutes = require('./routes/prediagnosticos');
 
 
 const app = express();
