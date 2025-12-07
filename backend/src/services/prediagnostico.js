@@ -1,6 +1,6 @@
 // services/prediagnostico.service.js
 const axios = require('axios');
-const pool = require('../db'); // tu pool de pg
+const pool = require('../config/db'); 
 
 // Mejor por variable de entorno
 const MICRO_IA_URL =
