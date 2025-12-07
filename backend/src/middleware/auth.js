@@ -20,7 +20,7 @@
 
   const verificarToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
+    const token = authHeader && authHeader.split(' ')[1]; 
 
     if (!token) {
       return res.status(401).json({ mensaje: 'No autorizado, token faltante' });
@@ -28,7 +28,7 @@
 
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.usuario = decoded; // ahora usamos req.usuario para mantener consistencia
+      req.usuario = decoded; 
       next();
     } catch (error) {
       return res.status(403).json({ mensaje: 'Token inválido o expirado' });

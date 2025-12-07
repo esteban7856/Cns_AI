@@ -84,17 +84,15 @@ const loginUsuario = async (req, res) => {
 
     //Si el usuario tiene un código temporal vigente, lo verificamos primero
     if (usuario.codigo_restablecer && usuario.expiracion_codigo) {
-      // ¿el código sigue vigente?
+      
       if (new Date() <= usuario.expiracion_codigo) {
         const esCodigoValido = await bcrypt.compare(password, usuario.codigo_restablecer);
         if (esCodigoValido) {
-          // ✅ Código correcto → generar token temporal para cambio de contraseña
           const token = jwt.sign(
             { id: usuario.id, email: usuario.email, tipo: 'reset-password' },
             process.env.JWT_SECRET,
             { expiresIn: '15m' } // token temporal
           );
-
           return res.status(200).json({
             mensaje: 'Código verificado correctamente',
             token,
@@ -103,10 +101,9 @@ const loginUsuario = async (req, res) => {
           });
         }
       }
-      // si llega aquí y no validó → seguimos probando contraseña normal
     }
 
-    //Verificamos contraseña normal (login normal)
+    //Verificamos contraseña normal login normal
     const esCorrecta = await bcrypt.compare(password, usuario.password);
     if (!esCorrecta) {
       return res.status(400).json({ mensaje: 'Credenciales inválidas' });
@@ -135,8 +132,6 @@ const loginUsuario = async (req, res) => {
     return res.status(500).json({ mensaje: 'Error al iniciar sesión' });
   }
 };
-
-
 
 
 // Cambiar contraseña primera vez
@@ -281,7 +276,7 @@ const resetPassword = async (req, res) => {
     if (req.usuario.tipo !== 'reset-password') {
       return res.status(403).json({ mensaje: 'Token no válido para esta operación' });
     }
-
+    // bcrypt con 10 rounds - estándar OWASP
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Actualizar contraseña y limpiar códigos temporales

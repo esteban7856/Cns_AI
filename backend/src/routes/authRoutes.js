@@ -1,4 +1,3 @@
-  // src/routes/authRoutes.js
   const express = require('express');
   const router = express.Router();
   const { 
@@ -7,7 +6,7 @@
     forgotPassword, 
     resetPassword, 
     cambiarPasswordPrimeraVez,
-    verificarCodigoTemporal  // Asegúrate de importar esta función
+    verificarCodigoTemporal
   } = require('../controllers/authController');
   const { verificarToken } = require('../middleware/auth');
 

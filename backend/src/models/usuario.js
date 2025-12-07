@@ -7,10 +7,10 @@ const Usuario = sequelize.define('Usuario', {
   nombre: { type: DataTypes.STRING, allowNull: false },
   apellido: { type: DataTypes.STRING, allowNull: false },
   email: { type: DataTypes.STRING, unique: true, allowNull: false },
-  password: {                // <-- nombre seguro para tu app
+  password: {               
     type: DataTypes.STRING,
     allowNull: false,
-    field: 'contraseña'       // <-- mapear al nombre real en la BD
+    field: 'contraseña'      
   },
   primeringreso: { type: DataTypes.BOOLEAN, defaultValue: true },
   rol: { type: DataTypes.ENUM('padre','medico','administrador'), allowNull: false },

@@ -10,6 +10,8 @@ const pacienteRoutes = require('./routes/pacientes');
 const { sequelize } = require('./config/db'); 
 const citasRouter = require('./routes/citas');
 const horariosRouter = require('./routes/horarios');  
+const prediagnosticosRoutes = require('./routes/prediagnosticos.routes');
+
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -24,6 +26,7 @@ app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/pacientes', pacienteRoutes);
 app.use('/api/citas', citasRouter);
 app.use('/api/horarios', horariosRouter);
+app.use('/api', prediagnosticosRoutes);
 
 // Inicialización del servidor
 async function start() {
