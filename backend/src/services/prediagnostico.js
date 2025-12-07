@@ -33,37 +33,47 @@ async function crearPrediagnostico({ pacienteId, sintomas }) {
 
     const sintomaId = sintomaRows[0].id;
 
-    // 2) Llamar al microservicio IA (FastAPI) - usa "text", NO "texto"
+    // 2) Llamar al microservicio IA (FastAPI)
     const iaResp = await axios.post(`${MICRO_IA_URL}/predict`, {
-      text: sintomas,
-      paciente_id: pacienteId, // FastAPI lo ignora, pero no molesta
+      text: sintomas,          // ⚠️ FastAPI espera "text"
+      paciente_id: pacienteId, // extra, pero no molesta
     });
 
-    const iaData = iaResp.data;
+    const iaData = iaResp.data || {};
+    console.log('Respuesta IA:', iaData); // útil para debug en Render
 
-    // Según tu FastAPI:
-    // {
-    //   diagnostico: str,
-    //   confianza: float 0-1,
-    //   mensaje: str,
-    //   sugerencia: str,
-    //   nivel_confianza: str,
-    //   probabilidad: "92.8%" (string bonito)
-    // }
-    const diagnostico = iaData.diagnostico || 'Sin diagnóstico';
+    // --------- DIAGNÓSTICO ---------
+    // Tu FastAPI devuelve "diagnostico"
+    const diagnostico =
+      iaData.diagnostico ||
+      iaData['diagnóstico'] || // por si acaso hay versión con tilde
+      'Sin diagnóstico';
 
-    // Para la BD usamos SIEMPRE "confianza" (float 0–1) como probabilidad
+    // --------- PROBABILIDAD (0–1 para la BD) ---------
     let probabilidad = 0;
+
+    // 1) Caso ideal: viene "confianza" como número 0–1
     if (typeof iaData.confianza === 'number') {
       probabilidad = iaData.confianza;
-    } else if (typeof iaData.confianza === 'string') {
+    }
+    // 2) Si "confianza" viene como string ("0.928")
+    else if (typeof iaData.confianza === 'string') {
       const parsed = parseFloat(iaData.confianza);
       if (!Number.isNaN(parsed)) {
         probabilidad = parsed;
       }
     }
+    // 3) Si NO hay "confianza", pero hay "probabilidad": "92.8%" (string)
+    else if (typeof iaData.probabilidad === 'string') {
+      const cleaned = iaData.probabilidad.replace('%', '').trim(); // "92.8"
+      const parsed = parseFloat(cleaned);
+      if (!Number.isNaN(parsed)) {
+        probabilidad = parsed / 100.0; // 92.8 -> 0.928
+      }
+    }
 
-    // Para recomendaciones guardamos algo útil del mensaje/sugerencia
+    // --------- RECOMENDACIONES ---------
+    // Algo útil para la columna recomendaciones
     const recomendaciones = iaData.sugerencia || iaData.mensaje || null;
 
     // 3) Insertar en prediagnosticos
@@ -78,7 +88,7 @@ async function crearPrediagnostico({ pacienteId, sintomas }) {
         replacements: {
           sintomaId,
           diagnostico,
-          probabilidad,  
+          probabilidad,   // <- ya es número entre 0 y 1
           recomendaciones,
         },
         transaction,
@@ -131,10 +141,8 @@ async function crearPrediagnostico({ pacienteId, sintomas }) {
       historialId = historialRows[0]?.id ?? null;
     }
 
-
     await transaction.commit();
 
-    // Lo que devolvemos al controlador
     return {
       sintoma_id: sintomaId,
       prediagnostico_id: prediagnosticoId,
