@@ -10,8 +10,8 @@ async function crearPrediagnostico({ pacienteId, sintomas }) {
   try {
     // 1) Insertar en sintomas
     const [sintoma] = await sequelize.query(
-      `INSERT INTO sintomas (paciente_id, sintomas, estado, fecha_sintomas)
-       VALUES (:pacienteId, :sintomas, 'en análisis', NOW())
+      `INSERT INTO sintomas (paciente_id, sintomas, fecha_sintomas)
+       VALUES (:pacienteId, :sintomas, NOW())
        RETURNING id, fecha_sintomas;`,
       {
         replacements: { pacienteId, sintomas },
@@ -64,8 +64,8 @@ async function crearPrediagnostico({ pacienteId, sintomas }) {
     if (iaVersion) {
       const [historial] = await sequelize.query(
         `INSERT INTO historial_prediagnosticos
-         (paciente_id, ia_version_id, sintomas, diagnostico, probabilidad, estado, fecha_prediccion)
-         VALUES (:pacienteId, :iaVersionId, :sintomas, :diagnostico, :probabilidad, 'pendiente', NOW())
+         (paciente_id, ia_version_id, sintomas, diagnostico, probabilidad, fecha_prediccion)
+         VALUES (:pacienteId, :iaVersionId, :sintomas, :diagnostico, :probabilidad, NOW())
          RETURNING id;`,
         {
           replacements: {
@@ -82,14 +82,7 @@ async function crearPrediagnostico({ pacienteId, sintomas }) {
       historialId = historial[0]?.id;
     }
 
-    // 5) Actualizar estado de sintomas
-    await sequelize.query(
-      `UPDATE sintomas SET estado = 'prediagnóstico realizado' WHERE id = :sintomaId`,
-      {
-        replacements: { sintomaId },
-        transaction
-      }
-    );
+    // No es necesario actualizar el estado de síntomas
 
     await transaction.commit();
 
