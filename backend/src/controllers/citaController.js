@@ -26,21 +26,24 @@
   */
   exports.create = async (req, res) => {
   try {
-    const { paciente_id, medico_id, fecha_cita, motivo, notas } = req.body;
+    const { paciente_id, historial_id, medico_id, fecha_cita, motivo, notas } = req.body;
 
     if (!paciente_id || !medico_id || !fecha_cita) {
       return res.status(400).json({ error: "Faltan datos obligatorios" });
     }
 
-    // 1️⃣ Verificar existencia de médico
+    //  Validar FKs (paciente, prediagnóstico, médico)
+    await validarFKs({ paciente_id, historial_id, medico_id });
+
+    //  Verificar existencia de médico
     const medico = await Usuario.findByPk(medico_id);
     if (!medico || medico.rol !== 'medico') {
       return res.status(400).json({ error: "El usuario indicado no es un médico válido" });
     }
 
-    // 2️⃣ Obtener el día de la semana (lunes, martes, etc.)
-    // 2️⃣ Obtener el día de la semana (lunes, martes, etc.) y hora local
-   // ⚙️ Convertir de UTC a hora local Bolivia (UTC-4)
+    //  Obtener el día de la semana (lunes, martes, etc.)
+
+   
     const fecha = new Date(fecha_cita);
     const localFecha = new Date(fecha.getTime() + (4 * 60 * 60 * 1000)); // sumamos 4 horas
 
@@ -55,7 +58,7 @@
 
 
 
-    // 3️⃣ Buscar horario disponible del médico
+    //  Buscar horario disponible del médico
     const horario = await HorarioMedico.findOne({
       where: {
         medico_id,
@@ -70,7 +73,7 @@
       return res.status(400).json({ error: "El médico no atiende en ese horario" });
     }
 
-    // 4️⃣ Verificar si ya hay cita en esa fecha/hora
+    //  Verificar si ya hay cita en esa fecha/hora
     const citaExistente = await CitaMedica.findOne({
       where: {
         medico_id,
@@ -83,9 +86,10 @@
       return res.status(400).json({ error: "El médico ya tiene una cita en ese horario" });
     }
 
-    // 5️⃣ Crear la cita médica
+    //  Crear la cita médica
     const nuevaCita = await CitaMedica.create({
       paciente_id,
+      historial_id: historial_id || null,
       medico_id,
       fecha_cita,
       motivo: motivo || null,
